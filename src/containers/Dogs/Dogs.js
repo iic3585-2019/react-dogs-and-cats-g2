@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './Home.css';
-import { getRandomDogsImages } from './../../wrapper/dogs';
+import './Dogs.css';
+import { getRandomDogsImages } from '../../wrapper/dogs';
 
 class Home extends Component {
   constructor(props) {
