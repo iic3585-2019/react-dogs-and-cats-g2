@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import $ from 'classnames';
 import './style.css';
-import './classes.css';
 
 // External modules:
 // - Change (https://github.com/chancejs/chancejs)

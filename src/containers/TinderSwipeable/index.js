@@ -91,13 +91,6 @@ class TinderSwipeable extends Component {
         rotate: 0,
         duration,
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
-        update: () => {
-          // const rawDeg = anim.animations[0].currentValue;
-          // const deg = Number(rawDeg.slice(0, -3));
-          // const deltaX = this.degToDeltaX(deg);
-
-          // this.setState({ deltaX })
-        },
         complete: () => {
           this.setState({ deltaX: 0 });
         },
@@ -105,6 +98,12 @@ class TinderSwipeable extends Component {
     }
 
     this.setState({ isSwiping: false });
+  }
+
+  deltaXToDeg = (deltaX) => {
+    const { maxDeltaX } = this.state;
+
+    return -1 * deltaX * 22.5 / maxDeltaX;
   }
 
   isRightSwipe = () => {
@@ -121,14 +120,6 @@ class TinderSwipeable extends Component {
     return deltaX > maxDeltaX * threshold;
   }
 
-  deltaXToDeg = (deltaX) => {
-    const { maxDeltaX } = this.state;
-
-    return -1 * deltaX * 22.5 / maxDeltaX;
-  }
-
-  degToDeltaX = () => { }
-
   render() {
     const { node } = this.props;
     const { deltaX } = this.state;
@@ -138,8 +129,8 @@ class TinderSwipeable extends Component {
 
     return (
       <Swipeable onSwiping={this.onSwiping} onSwiped={this.onSwiped}>
-        <div className="tinder-swipeable" ref={this.ref}>
-          <div style={style} className="tinder-swipeable-node">
+        <div className="tinder-swipeable">
+          <div style={style} className="tinder-swipeable__node" ref={this.ref}>
             {node}
           </div>
         </div>
