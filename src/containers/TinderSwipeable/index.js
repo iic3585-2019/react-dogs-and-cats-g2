@@ -1,25 +1,28 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './style.css'
 
-// Anime (https://github.com/juliangarnier/anime/)
+// External modules:
+// - Anime (https://github.com/juliangarnier/anime/)
 import anime from 'animejs';
 
-// React Swipeable (https://github.com/dogfessional/react-swipeable)
+// - React Swipeable (https://github.com/dogfessional/react-swipeable)
 import { Swipeable } from 'react-swipeable'
 
-// Verge (https://github.com/ryanve/verge)
+// - Verge (https://github.com/ryanve/verge)
 import verge from 'verge';
 
 const getCurrentMaxDeltaX = () => Math.floor(verge.viewportW() / 2);
 
-export default class extends Component {
+class TinderSwipeable extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       deltaX: 0,
-      isSwiping: false,
       maxDeltaX: getCurrentMaxDeltaX(),
+
+      isSwiping: false,
     }
 
     this.animation = null;
@@ -34,45 +37,50 @@ export default class extends Component {
   }
 
   onViewportResize = () => {
-    this.setState({ maxDeltaX:  getCurrentMaxDeltaX()})
+    this.setState({ maxDeltaX: getCurrentMaxDeltaX() })
   }
 
-  onSwiping = (event) => {
-    if (!this.state.isSwiping) {
-      if (this.animation)
-        this.animation.pause()
-      this.setState({ isSwiping: true, deltaX: event.deltaX })
+  onSwiping = ({ deltaX }) => {
+    const { isSwiping } = this.state;
+
+    if (!isSwiping) {
+      if (this.animation) this.animation.pause()
+
+      this.setState({ deltaX, isSwiping: true })
     } else {
-      this.setState({ deltaX: event.deltaX })
+      this.setState({ deltaX })
     }
   }
 
   onSwiped = () => {
-    this.setState({ isSwiping: false})
+    const { onRightSwipe, onLeftSwipe } = this.props;
 
-    const duration = 5000
+    const targets = '.tinder-swipeable .top'
+    const duration = 500
 
     if (this.isRightSwipe()) {
       this.animation = anime({
-        targets: '.swiped',
+        targets,
         opacity: 0,
-        duration: duration,
+        duration,
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
+        complete: onRightSwipe,
       })
     } else if (this.isLeftSwipe()) {
       this.animation = anime({
-        targets: '.swiped',
+        targets,
         opacity: 0,
-        duration: duration,
+        duration,
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
+        complete: onLeftSwipe,
       })
     } else {
       this.animation = anime({
-        targets: '.swiped',
+        targets,
         rotate: 0,
-        duration: duration,
+        duration,
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
-        update: (anim) => {
+        update: () => {
           // const rawDeg = anim.animations[0].currentValue;
           // const deg = Number(rawDeg.slice(0, -3));
           // const deltaX = this.degToDeltaX(deg);
@@ -82,6 +90,7 @@ export default class extends Component {
       })
     }
 
+    this.setState({ isSwiping: false })
   }
 
   isRightSwipe = () => {
@@ -104,22 +113,45 @@ export default class extends Component {
     return -1 * deltaX * 22.5 / maxDeltaX
   }
 
-  degToDeltaX = (deg) => {
-  }
+  degToDeltaX = () => {}
 
   render() {
     const { deltaX } = this.state;
     const deg = this.deltaXToDeg(deltaX)
 
+    const { Top, Bottom } = this.props;
+
     return (
       <Swipeable onSwiping={this.onSwiping} onSwiped={this.onSwiped}>
-        <div className="swiper">
-          <div className="swiped" style={{
-            transform: `rotate(${deg}deg)`
-          }}>
-          </div>
+        <div className="tinder-swipeable">
+          <Bottom className="bottom" />
+
+          <Top
+            className="top"
+            style={{
+              transform: `rotate(${deg}deg)`
+            }}
+          />
         </div>
       </Swipeable>
     )
   }
 }
+
+TinderSwipeable.defaultProps = {
+  threshold: .5,
+
+  onRightSwipe: () => { },
+  onLeftSwipe: () => { },
+}
+
+TinderSwipeable.propTypes = {
+  Top: PropTypes.node.isRequired,
+  Bottom: PropTypes.node.isRequired,
+  threshold: PropTypes.number,
+
+  onRightSwipe: PropTypes.func,
+  onLeftSwipe: PropTypes.func,
+}
+
+export default TinderSwipeable;
