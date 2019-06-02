@@ -11,6 +11,8 @@
   font-family: 'Lato';
 
   height: 25vh;
+
+  background-color: white;
 }
 
 .summary__name {
@@ -34,4 +36,8 @@
   height: 1px;
 
   background-color: lightgray
+}
+
+.home .tinder-swipeable-wrapper {
+  position: absolute; 
 }

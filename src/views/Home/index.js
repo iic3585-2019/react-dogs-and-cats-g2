@@ -124,13 +124,15 @@ export default class Home extends Component {
 
   render() {
     const { items } = this.state;
+
     const batch = items.slice(0, 2);
     const tinderSwipeables = batch.map(({ uri, summary }) => (
       <div
         key={summary.name}
+        className="tinder-swipeable-wrapper"
       >
         <TinderSwipeable
-          top={<Image uri={uri} />}
+          node={<Image uri={uri} />}
           threshold={.5}
           onRightSwipe={this.onRightSwipe}
           onLeftSwipe={this.onLeftSwipe}
@@ -140,10 +142,10 @@ export default class Home extends Component {
       </div>
     ));
 
-    if (batch.length > 0) {
-      return tinderSwipeables;
-    }
-
-    return <div />;
+    return (
+      <div className="home">
+        {tinderSwipeables}
+      </div>
+    );
   }
 }

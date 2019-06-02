@@ -67,8 +67,7 @@ class TinderSwipeable extends Component {
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
         complete: () => {
           this.setState({ deltaX: 0 });
-          const element = document.querySelector('.tinder-swipeable .top');
-          element.style.opacity = 1;
+          targets.style.opacity = 1;
 
           onRightSwipe();
         },
@@ -81,8 +80,7 @@ class TinderSwipeable extends Component {
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
         complete: () => {
           this.setState({ deltaX: 0 });
-          const element = document.querySelector('.tinder-swipeable .top');
-          element.style.opacity = 1;
+          targets.style.opacity = 1;
 
           onLeftSwipe();
         },
@@ -132,22 +130,17 @@ class TinderSwipeable extends Component {
   degToDeltaX = () => { }
 
   render() {
-    const { top } = this.props;
+    const { node } = this.props;
     const { deltaX } = this.state;
 
     const deg = this.deltaXToDeg(deltaX);
+    const style = { transform: `rotate(${deg}deg)` };
 
     return (
       <Swipeable onSwiping={this.onSwiping} onSwiped={this.onSwiped}>
-        <div className="tinder-swipeable">
-          <div
-            className="top"
-            ref={this.ref}
-            style={{
-              transform: `rotate(${deg}deg)`
-            }}
-          >
-            {top}
+        <div className="tinder-swipeable" ref={this.ref}>
+          <div style={style} className="tinder-swipeable-node">
+            {node}
           </div>
         </div>
       </Swipeable>
@@ -163,7 +156,7 @@ TinderSwipeable.defaultProps = {
 };
 
 TinderSwipeable.propTypes = {
-  top: PropTypes.node.isRequired,
+  node: PropTypes.node.isRequired,
   threshold: PropTypes.number,
 
   onRightSwipe: PropTypes.func,

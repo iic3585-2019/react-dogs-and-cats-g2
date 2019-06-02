@@ -5,8 +5,7 @@
   height: 75vh;
 }
 
-.tinder-swipeable .top, 
-.tinder-swipeable .bottom
+.tinder-swipeable-node
 {
   position: absolute;
   top: 0;
@@ -17,8 +16,7 @@
   transform-origin: 50% 300%;
 }
 
-.tinder-swipeable .top > *, 
-.tinder-swipeable .bottom > *
+.tinder-swipeable-node > *
 {
   position: absolute;
   top: 0;
