@@ -66,6 +66,8 @@ class TinderSwipeable extends Component {
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
         complete: () => {
           this.setState({ deltaX: 0 });
+          const element = document.querySelector('.tinder-swipeable .top');
+          element.style.opacity = 1;
 
           onRightSwipe();
         },
@@ -78,6 +80,8 @@ class TinderSwipeable extends Component {
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
         complete: () => {
           this.setState({ deltaX: 0 });
+          const element = document.querySelector('.tinder-swipeable .top');
+          element.style.opacity = 1;
 
           onLeftSwipe();
         },
