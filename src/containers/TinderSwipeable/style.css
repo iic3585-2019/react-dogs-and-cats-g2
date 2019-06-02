@@ -1,0 +1,26 @@
+.tinder-swipeable {
+  position: relative;
+
+  width: 100vw;
+  height: 66vh;
+}
+
+.tinder-swipeable__node
+{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  transform-origin: 50% 300%;
+}
+
+.tinder-swipeable__node > *
+{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  }

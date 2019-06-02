@@ -1,9 +1,12 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Dogs from './containers/Dogs/Dogs.js';
+
+import Home from './views/Home';
+import Animals from './containers/Animals/Animals.js';
 
 export default () => (
   <Switch>
-    <Route path="/dogs" exact component={Dogs} />
+    <Route path="/" exact component={Home} />
+    <Route path="/animals" exact component={Animals} />
   </Switch>
 );

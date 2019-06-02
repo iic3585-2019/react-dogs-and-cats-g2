@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './Dogs.css';
+import './Animals.css';
 import { getAnimal } from '../../wrapper/animals';
 
-class Home extends Component {
+class Animal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,6 +12,7 @@ class Home extends Component {
   }
 
   async animal(quantity) {
+    console.log('me llamaron');
     const newState = [];
     while (quantity > 0) {
       const randomAnimal = await getAnimal();
@@ -28,7 +29,7 @@ class Home extends Component {
     imagesLoaded.shift();
     const newState = imagesLoaded;
     if (newState.length === 0) {
-      this.animal(3);
+      this.animal(2);
     } else {
       this.setState({
         imagesLoaded: newState,
@@ -48,8 +49,15 @@ class Home extends Component {
         </div>
       );
     }
-    return false;
+    return (
+      <div className="Home">
+        <div className="lander">
+          <h1>Dogs And Cats</h1>
+          <img />
+        </div>
+      </div>
+    );
   }
 }
 
-export default Home;
+export default Animal;
