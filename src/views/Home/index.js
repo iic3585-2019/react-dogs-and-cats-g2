@@ -102,7 +102,6 @@ export default class Home extends Component {
     ];
 
     this.state = {
-      open: false,
       items
     };
   }
@@ -120,7 +119,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const { open, items } = this.state;
+    const { items } = this.state;
 
     const batch = items.slice(0, 2);
     const tinderSwipeables = batch.map(({ uri, summary }) => (
