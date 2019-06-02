@@ -64,7 +64,11 @@ class TinderSwipeable extends Component {
         opacity: 0,
         duration,
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
-        complete: onRightSwipe,
+        complete: () => {
+          this.setState({ deltaX: 0 });
+
+          onRightSwipe();
+        },
       });
     } else if (this.isLeftSwipe()) {
       this.animation = anime({
@@ -72,7 +76,11 @@ class TinderSwipeable extends Component {
         opacity: 0,
         duration,
         easing: 'cubicBezier(0.23, 1, 0.32, 1)',
-        complete: onLeftSwipe,
+        complete: () => {
+          this.setState({ deltaX: 0 });
+
+          onLeftSwipe();
+        },
       });
     } else {
       this.animation = anime({
@@ -86,7 +94,10 @@ class TinderSwipeable extends Component {
           // const deltaX = this.degToDeltaX(deg);
 
           // this.setState({ deltaX })
-        }
+        },
+        complete: () => {
+          this.setState({ deltaX: 0 });
+        },
       });
     }
 
@@ -124,9 +135,11 @@ class TinderSwipeable extends Component {
     return (
       <Swipeable onSwiping={this.onSwiping} onSwiped={this.onSwiped}>
         <div className="tinder-swipeable">
-          <div className="bottom">
-            {bottom}
-          </div>
+          {bottom && (
+            <div className="bottom">
+              {bottom}
+            </div>
+          )}
 
           <div
             className="top"
@@ -143,6 +156,7 @@ class TinderSwipeable extends Component {
 }
 
 TinderSwipeable.defaultProps = {
+  bottom: null,
   threshold: .5,
 
   onRightSwipe: () => { },
@@ -151,7 +165,7 @@ TinderSwipeable.defaultProps = {
 
 TinderSwipeable.propTypes = {
   top: PropTypes.node.isRequired,
-  bottom: PropTypes.node.isRequired,
+  bottom: PropTypes.node,
   threshold: PropTypes.number,
 
   onRightSwipe: PropTypes.func,
