@@ -95,6 +95,10 @@ export default class Home extends Component {
       getItem(),
       getItem(),
       getItem(),
+      getItem(),
+      getItem(),
+      getItem(),
+      getItem(),
     ];
 
     this.state = { items };
@@ -120,41 +124,24 @@ export default class Home extends Component {
 
   render() {
     const { items } = this.state;
+    const batch = items.slice(0, 2);
+    const tinderSwipeables = batch.map(({ uri, summary }) => (
+      <div
+        key={summary.name}
+      >
+        <TinderSwipeable
+          top={<Image uri={uri} />}
+          threshold={.5}
+          onRightSwipe={this.onRightSwipe}
+          onLeftSwipe={this.onLeftSwipe}
+        />
 
-    if (items.length > 0) {
-      const { uri, summary } = items[0];
-      const topImage = <Image uri={uri} />;
+        <Summary summary={summary} />
+      </div>
+    ));
 
-      if (items.length > 1) {
-        const bottomImage = <Image uri={items[1].uri} />;
-
-        return (
-          <div>
-            <TinderSwipeable
-              top={topImage}
-              bottom={bottomImage}
-              threshold={.5}
-              onRightSwipe={this.onRightSwipe}
-              onLeftSwipe={this.onLeftSwipe}
-            />
-
-            <Summary summary={summary} />
-          </div>
-        );
-      }
-
-      return (
-        <div>
-          <TinderSwipeable
-            top={topImage}
-            threshold={.5}
-            onRightSwipe={this.onRightSwipe}
-            onLeftSwipe={this.onLeftSwipe}
-          />
-
-          <Summary summary={summary} />
-        </div>
-      );
+    if (batch.length > 0) {
+      return tinderSwipeables;
     }
 
     return <div />;

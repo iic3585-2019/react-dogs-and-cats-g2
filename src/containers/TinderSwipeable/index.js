@@ -26,6 +26,7 @@ class TinderSwipeable extends Component {
     };
 
     this.animation = null;
+    this.ref = React.createRef();
   }
 
   componentDidMount() {
@@ -55,7 +56,7 @@ class TinderSwipeable extends Component {
   onSwiped = () => {
     const { onRightSwipe, onLeftSwipe } = this.props;
 
-    const targets = '.tinder-swipeable .top';
+    const targets = this.ref.current;
     const duration = 500;
 
     if (this.isRightSwipe()) {
@@ -131,7 +132,7 @@ class TinderSwipeable extends Component {
   degToDeltaX = () => { }
 
   render() {
-    const { top, bottom } = this.props;
+    const { top } = this.props;
     const { deltaX } = this.state;
 
     const deg = this.deltaXToDeg(deltaX);
@@ -139,14 +140,9 @@ class TinderSwipeable extends Component {
     return (
       <Swipeable onSwiping={this.onSwiping} onSwiped={this.onSwiped}>
         <div className="tinder-swipeable">
-          {bottom && (
-            <div className="bottom">
-              {bottom}
-            </div>
-          )}
-
           <div
             className="top"
+            ref={this.ref}
             style={{
               transform: `rotate(${deg}deg)`
             }}
@@ -160,7 +156,6 @@ class TinderSwipeable extends Component {
 }
 
 TinderSwipeable.defaultProps = {
-  bottom: null,
   threshold: .5,
 
   onRightSwipe: () => { },
@@ -169,7 +164,6 @@ TinderSwipeable.defaultProps = {
 
 TinderSwipeable.propTypes = {
   top: PropTypes.node.isRequired,
-  bottom: PropTypes.node,
   threshold: PropTypes.number,
 
   onRightSwipe: PropTypes.func,
