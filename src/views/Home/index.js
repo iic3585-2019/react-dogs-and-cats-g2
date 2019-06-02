@@ -7,10 +7,11 @@ import './style.css';
 // - Change (https://github.com/chancejs/chancejs)
 import Chance from 'chance';
 
+// Components
 import TinderSwipeable from '../../containers/TinderSwipeable';
+import Menu from '../../containers/Menu';
 
 const chance = new Chance();
-
 const getItem = () => {
   return {
     uri: "https://static.twentytwowords.com/wp-content/uploads/03_-_ty6nplc.jpg",
@@ -100,29 +101,26 @@ export default class Home extends Component {
       getItem(),
     ];
 
-    this.state = { items };
+    this.state = {
+      open: false,
+      items
+    };
   }
 
   onRightSwipe = () => {
     const { items } = this.state;
 
-    const newItems = items.slice(1);
-    this.setState({ items: newItems });
-
-    console.log('right!');
+    this.setState({ items: items.slice(1) });
   }
 
   onLeftSwipe = () => {
     const { items } = this.state;
 
-    const newItems = items.slice(1);
-    this.setState({ items: newItems });
-
-    console.log('left!');
+    this.setState({ items: items.slice(1) });
   }
 
   render() {
-    const { items } = this.state;
+    const { open, items } = this.state;
 
     const batch = items.slice(0, 2);
     const tinderSwipeables = batch.map(({ uri, summary }) => (
@@ -142,9 +140,13 @@ export default class Home extends Component {
     ));
 
     return (
-      <div className="home">
-        {tinderSwipeables}
-      </div>
+      <React.Fragment>
+        <Menu />
+
+        <div className="home">
+          {tinderSwipeables}
+        </div>
+      </React.Fragment>
     );
   }
 }
