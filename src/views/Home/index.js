@@ -6,6 +6,17 @@ import './classes.css';
 
 import TinderSwipeable from '../../containers/TinderSwipeable';
 
+const getItem = () => {
+  return {
+    uri: "https://static.twentytwowords.com/wp-content/uploads/03_-_ty6nplc.jpg",
+    summary: {
+      name: 'Lorenzo',
+      age: 8,
+      description: 'Proin aliquet libero eros, vel auctor ante ultricies sit amet. Integer ex justo, euismod et felis non, pretium hendrerit sapien. Ut interdum efficitur massa, a tincidunt enim malesuada id.'
+    },
+  };
+};
+
 // =============================================================================
 
 const Image = ({ uri, className, ...props }) => (
@@ -75,9 +86,9 @@ export default class Home extends Component {
     super(props);
 
     const items = [
-      <Image uri="https://files.brightside.me/files/news/part_22/223005/preview-6210455-650x341-98-1508149182.jpg" />,
-      <Image uri="https://steemitimages.com/640x0/http://1.bp.blogspot.com/-3aMMGqmMOgY/VXekCz-bBiI/AAAAAAAAAE0/UsptvE9Blko/s1600/The%2BMost%2BBeautiful%2BWoman%2Bin%2Bthe%2BWorld%2BAward2.jpg" />,
-      <Image uri="https://static.twentytwowords.com/wp-content/uploads/03_-_ty6nplc.jpg" />,
+      getItem(),
+      getItem(),
+      getItem(),
     ];
 
     this.state = { items };
@@ -104,28 +115,42 @@ export default class Home extends Component {
   render() {
     const { items } = this.state;
 
-    return (
-      <div>
-        <TinderSwipeable
-          top={items[0]}
-          bottom={items[1]}
-          threshold={.5}
-          onRightSwipe={
-            this.onRightSwipe
-          }
-          onLeftSwipe={
-            this.onLeftSwipe
-          }
-        />
+    if (items.length > 0) {
+      const { uri, summary } = items[0];
+      const topImage = <Image uri={uri} />;
 
-        <Summary summary={{
-          name: 'Lorenzo',
-          age: 8,
-          description: 'Proin aliquet libero eros, vel auctor ante ultricies sit amet. Integer ex justo, euismod et felis non, pretium hendrerit sapien. Ut interdum efficitur massa, a tincidunt enim malesuada id.'
-        }}
-        />
+      if (items.length > 1) {
+        const bottomImage = <Image uri={items[1].uri} />;
 
-      </div>
-    );
+        return (
+          <div>
+            <TinderSwipeable
+              top={topImage}
+              bottom={bottomImage}
+              threshold={.5}
+              onRightSwipe={this.onRightSwipe}
+              onLeftSwipe={this.onLeftSwipe}
+            />
+
+            <Summary summary={summary} />
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <TinderSwipeable
+            top={topImage}
+            threshold={.5}
+            onRightSwipe={this.onRightSwipe}
+            onLeftSwipe={this.onLeftSwipe}
+          />
+
+          <Summary summary={summary} />
+        </div>
+      );
+    }
+
+    return <div />;
   }
 }
