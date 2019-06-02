@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import $ from 'classnames';
 import './style.css';
+import './classes.css';
 
 import TinderSwipeable from '../../containers/TinderSwipeable';
+
+// =============================================================================
 
 const Image = ({ uri, className, ...props }) => (
   <div
@@ -11,6 +15,60 @@ const Image = ({ uri, className, ...props }) => (
     {...props}
   />
 );
+
+Image.defaultProps = {
+  className: '',
+};
+
+Image.propTypes = {
+  uri: PropTypes.string.isRequired,
+  className: PropTypes.string,
+};
+
+// =============================================================================
+
+const Summary = ({ className, ...props }) => {
+  const { summary } = props;
+  const { name, age, description } = summary;
+
+  return (
+    <div
+      className={$('summary', className)}
+      {...props}
+    >
+      <div className="d-flex-r d-flex-a-c v-padding-0 h-padding-1">
+        <div className="summary__name">
+          {name}
+        </div>
+
+        <div className="summary__age margin-l-0">
+          {age}
+        </div>
+      </div>
+
+      <div className="h-separator" />
+
+      <div className="summary__description v-padding-0 h-padding-1">
+        {description}
+      </div>
+    </div>
+  );
+};
+
+Summary.defaultProps = {
+  className: '',
+};
+
+Summary.propTypes = {
+  summary: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    age: PropTypes.number.isRequired,
+    description: PropTypes.string.isRequired,
+  }).isRequired,
+  className: PropTypes.string,
+};
+
+// =============================================================================
 
 export default class Home extends Component {
   constructor(props) {
@@ -47,17 +105,27 @@ export default class Home extends Component {
     const { items } = this.state;
 
     return (
-      <TinderSwipeable
-        top={items[0]}
-        bottom={items[1]}
-        threshold={.5}
-        onRightSwipe={
-          this.onRightSwipe
-        }
-        onLeftSwipe={
-          this.onLeftSwipe
-        }
-      />
+      <div>
+        <TinderSwipeable
+          top={items[0]}
+          bottom={items[1]}
+          threshold={.5}
+          onRightSwipe={
+            this.onRightSwipe
+          }
+          onLeftSwipe={
+            this.onLeftSwipe
+          }
+        />
+
+        <Summary summary={{
+          name: 'Lorenzo',
+          age: 8,
+          description: 'Proin aliquet libero eros, vel auctor ante ultricies sit amet. Integer ex justo, euismod et felis non, pretium hendrerit sapien. Ut interdum efficitur massa, a tincidunt enim malesuada id.'
+        }}
+        />
+
+      </div>
     );
   }
 }
