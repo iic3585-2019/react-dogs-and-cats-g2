@@ -4,13 +4,12 @@ import './style.css';
 
 import TinderSwipeable from '../../containers/TinderSwipeable';
 
-const Red = ({ className, ...props }) => (<div className={$('red', className)} {...props} />);
-const Blue = ({ className, ...props }) => (<div className={$('blue', className)} {...props} />);
+const Color = ({ color, className, ...props }) => (<div className={$(color, className)} {...props} />);
 
 export default () => (
   <TinderSwipeable
-    Top={Red}
-    Bottom={Blue}
+    top={<Color color="red" />}
+    bottom={<Color color="blue" />}
     threshold={.5}
     onRightSwipe={
       () => {

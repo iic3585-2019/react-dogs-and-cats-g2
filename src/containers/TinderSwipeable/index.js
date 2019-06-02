@@ -116,22 +116,26 @@ class TinderSwipeable extends Component {
   degToDeltaX = () => { }
 
   render() {
+    const { top, bottom } = this.props;
     const { deltaX } = this.state;
-    const deg = this.deltaXToDeg(deltaX);
 
-    const { Top, Bottom } = this.props;
+    const deg = this.deltaXToDeg(deltaX);
 
     return (
       <Swipeable onSwiping={this.onSwiping} onSwiped={this.onSwiped}>
         <div className="tinder-swipeable">
-          <Bottom className="bottom" />
+          <div className="bottom">
+            {bottom}
+          </div>
 
-          <Top
+          <div
             className="top"
             style={{
               transform: `rotate(${deg}deg)`
             }}
-          />
+          >
+            {top}
+          </div>
         </div>
       </Swipeable>
     );
@@ -146,8 +150,8 @@ TinderSwipeable.defaultProps = {
 };
 
 TinderSwipeable.propTypes = {
-  Top: PropTypes.func.isRequired,
-  Bottom: PropTypes.func.isRequired,
+  top: PropTypes.node.isRequired,
+  bottom: PropTypes.node.isRequired,
   threshold: PropTypes.number,
 
   onRightSwipe: PropTypes.func,
