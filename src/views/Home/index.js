@@ -4,15 +4,21 @@ import $ from 'classnames';
 import './style.css';
 import './classes.css';
 
+// External modules:
+// - Change (https://github.com/chancejs/chancejs)
+import Chance from 'chance';
+
 import TinderSwipeable from '../../containers/TinderSwipeable';
+
+const chance = new Chance();
 
 const getItem = () => {
   return {
     uri: "https://static.twentytwowords.com/wp-content/uploads/03_-_ty6nplc.jpg",
     summary: {
-      name: 'Lorenzo',
-      age: 8,
-      description: 'Proin aliquet libero eros, vel auctor ante ultricies sit amet. Integer ex justo, euismod et felis non, pretium hendrerit sapien. Ut interdum efficitur massa, a tincidunt enim malesuada id.'
+      name: chance.first(),
+      age: chance.age({ type: 'child' }),
+      description: chance.paragraph({ sentences: 5 })
     },
   };
 };

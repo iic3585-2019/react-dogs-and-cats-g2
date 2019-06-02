@@ -5,7 +5,12 @@
 }
 
 .summary {
-  font-family: 'Lato'
+  display: flex;
+  flex-direction: column;
+
+  font-family: 'Lato';
+
+  height: 25vh;
 }
 
 .summary__name {
@@ -20,6 +25,8 @@
 
 .summary__description {
   font-weight: lighter;
+
+  overflow-y: auto;
 }
 
 .h-separator {
