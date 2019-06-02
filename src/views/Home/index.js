@@ -71,20 +71,18 @@ Summary.propTypes = {
 export default class Home extends Component {
   constructor(props) {
     super(props);
+    const preItems = [getItem(), getItem(), getItem(), getItem(), getItem(), getItem(), getItem()];
     this.state = {
       items: null,
+      preItems,
     };
-    const items = [];
-    getItem().then(async item => {
-      console.log(items);
-      items.push(item);
-      for (let i = 0; i < 5; i++) {
-        const newItem = await getItem();
-        items.push(newItem);
-      }
-      this.setState({
-        items: items,
-      });
+  }
+
+  async newState() {
+    const { preItems } = this.state;
+    const newItems = await Promise.all(preItems);
+    this.setState({
+      items: newItems,
     });
   }
 
@@ -114,7 +112,10 @@ export default class Home extends Component {
   render() {
     const { items } = this.state;
     if (items !== null) {
+      console.log('los items');
+      console.log(items);
       const batch = items.slice(0, 2);
+      console.log('el batch');
       console.log(batch);
       const tinderSwipeables = batch.map(({ uri, summary }) => (
         <div key={summary.breed} className="tinder-swipeable-wrapper">
@@ -130,6 +131,8 @@ export default class Home extends Component {
       ));
 
       return <div className="home">{tinderSwipeables}</div>;
+    } else {
+      this.newState();
     }
     return false;
   }
