@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Dogs.css';
-import { getRandomDogsImages } from '../../wrapper/dogs';
-import { getRandomCatsImages } from '../../wrapper/cats';
+import { getAnimal } from '../../wrapper/animals';
 
 class Home extends Component {
   constructor(props) {
@@ -9,51 +8,37 @@ class Home extends Component {
     this.state = {
       imagesLoaded: null,
     };
-    this.getDog(5);
+    this.animal(5);
   }
 
-  getDog(quantity) {
-    getRandomDogsImages(quantity).then(dogs => {
-      const { imagesLoaded } = this.state;
-      if (imagesLoaded === null) {
-        this.setState({
-          imagesLoaded: dogs.data.message,
-        });
-      } else {
-        const newState = imagesLoaded.concat(dogs.data.message);
-        this.setState({
-          imagesLoaded: newState,
-        });
-      }
+  async animal(quantity) {
+    const newState = [];
+    while (quantity > 0) {
+      const randomAnimal = await getAnimal();
+      newState.push(randomAnimal.image);
+      quantity -= 1;
+    }
+    this.setState({
+      imagesLoaded: newState,
     });
-  }
-
-  getCat(quantity) {
-    getRandomCatsImages(quantity).then(cats => {
-      const { imagesLoaded } = this.state;
-      const imagesCats = [];
-      cats.data.map(cat => imagesCats.push(cat.url));
-      const newState = imagesLoaded.concat(imagesCats);
-      this.setState({
-        imagesLoaded: newState,
-      });
-    });
-    this.getDog(5);
   }
 
   changeState() {
     const { imagesLoaded } = this.state;
     imagesLoaded.shift();
     const newState = imagesLoaded;
-    this.setState({
-      imagesLoaded: newState,
-    });
+    if (newState.length === 0) {
+      this.animal(3);
+    } else {
+      this.setState({
+        imagesLoaded: newState,
+      });
+    }
   }
 
   render() {
     const { imagesLoaded } = this.state;
     if (imagesLoaded !== null) {
-      this.getCat(5);
       return (
         <div className="Home">
           <div className="lander">

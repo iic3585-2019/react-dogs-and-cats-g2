@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { random } from 'lodash';
 
 const BREEDS_URI = 'https://dog.ceo/api/breeds/list/all';
 const RANDOM_IMAGES_URI = 'https://dog.ceo/api/breeds/image/random/';
@@ -24,6 +25,16 @@ const getRandomDogsBreedImages = async (breed, quantity) => {
     BREED_IMAGES_URI + breed + '/images/random/' + quantity
   );
   return images;
+};
+
+const getDog = async () => {
+  const breedsApi = await getAllDogsBreeds();
+  const breeds = Object.keys(breedsApi.data.message);
+  const randomNumber = random(breeds.length - 1);
+  const breed = breeds[randomNumber];
+  const dog = await axios.get(BREED_IMAGES_URI + breed + '/images/random');
+  const image = dog.data.message;
+  return { breed, image };
 };
 
 const getSubBreeds = async breed => {
@@ -53,4 +64,5 @@ export {
   getSubBreeds,
   getAllSubBreedImages,
   getRandomSubBreedImages,
+  getDog,
 };
