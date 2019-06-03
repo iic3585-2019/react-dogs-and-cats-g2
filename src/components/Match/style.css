@@ -1,0 +1,19 @@
+.match__body {
+  position: absolute;
+  top: calc(33% - 12.5vh);
+  left: calc(50% - 45vw);
+
+  height: 25vh;
+  width: 90vw;
+
+  background-color: lightgray;
+  border-radius: 4px;
+}
+
+.match__body .image {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}

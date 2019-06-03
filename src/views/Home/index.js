@@ -16,6 +16,7 @@ import getPet from '../../API/pets';
 
 // Components
 import Image from '../../components/Image';
+import Match from '../../components/Match';
 import Menu from '../../containers/Menu';
 import Summary from '../../components/Summary';
 import TinderSwipeable from '../../containers/TinderSwipeable';
@@ -24,7 +25,10 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { feed: [] };
+    this.state = {
+      feed: [],
+      isAMatch: false,
+    };
   }
 
   async componentDidMount() {
@@ -58,11 +62,10 @@ export default class Home extends Component {
   onRightSwipe = (feedItem) => {
     const { feed } = this.state;
 
-    if (feedItem.like) {
-      console.log('match!');
-    }
-
-    this.setState({ feed: feed.slice(1) });
+    this.setState({
+      feed: feed.slice(1),
+      isAMatch: feedItem.like
+    });
   }
 
   onLeftSwipe = () => {
@@ -72,13 +75,23 @@ export default class Home extends Component {
   }
 
   render() {
-    const { feed } = this.state;
+    const { feed, isAMatch } = this.state;
 
     const feedBatch = _.reverse(feed.slice(0, 2));
 
     return (
       <div className="home">
         <Menu />
+
+        {
+          feedBatch.length > 0 && (
+            <Match
+              isAMatch={isAMatch}
+              uri={feed[0].uri}
+              onClose={() => this.setState({ isAMatch: false })}
+            />
+          )
+        }
 
         {
           feedBatch.map((feedItem) => (
