@@ -83,6 +83,8 @@ class Home extends Component {
 
     const like = Math.random() <= toProbability(x);
 
+    console.log(`x: ${x}`, `p: ${toProbability(x)}`, like);
+
     this.setState({
       feed: feed.slice(1),
       match: like ? feedItem : null,
