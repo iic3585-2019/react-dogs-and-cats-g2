@@ -27,7 +27,7 @@ export default class Home extends Component {
 
     this.state = {
       feed: [],
-      isAMatch: false,
+      match: null,
     };
   }
 
@@ -64,7 +64,7 @@ export default class Home extends Component {
 
     this.setState({
       feed: feed.slice(1),
-      isAMatch: feedItem.like
+      match: feedItem,
     });
   }
 
@@ -75,7 +75,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const { feed, isAMatch } = this.state;
+    const { feed, match } = this.state;
 
     const feedBatch = _.reverse(feed.slice(0, 2));
 
@@ -84,11 +84,11 @@ export default class Home extends Component {
         <Menu />
 
         {
-          feedBatch.length > 0 && (
+          match && (
             <Match
-              isAMatch={isAMatch}
-              uri={feed[0].uri}
-              onClose={() => this.setState({ isAMatch: false })}
+              isAMatch={Boolean(match)}
+              uri={match.uri}
+              onClose={() => this.setState({ match: null })}
             />
           )
         }
