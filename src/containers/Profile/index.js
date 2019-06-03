@@ -15,13 +15,13 @@ const Profile = (props) => {
   const { mealsPerDay, weeklyWalks, hoursAlone } = profile;
 
   return (
-    <div className="profile">
+    <div className="profile h-margin-3">
       <TextField
         id="meals-per-day"
         type="number"
         value={mealsPerDay}
         label="Meals per day"
-        helperText="Dogs and cats loves to eat"
+        helperText="Dogs and cats loves to eat (cats even more)"
         margin="normal"
         onChange={({ target: { value } }) => update({ mealsPerDay: Number(value) })}
       />
@@ -31,7 +31,7 @@ const Profile = (props) => {
         type="number"
         value={weeklyWalks}
         label="Weekly walks"
-        helperText="Dogs loves to walk"
+        helperText="Dogs loves to walk, but cat not as much"
         margin="normal"
         onChange={({ target: { value } }) => update({ weeklyWalks: Number(value) })}
       />
@@ -41,7 +41,7 @@ const Profile = (props) => {
         type="number"
         value={hoursAlone}
         label="Hours alone"
-        helperText="Dogs want to be with you, but cats..."
+        helperText="Dogs want to be with you. Cats don't want to be with you"
         margin="normal"
         onChange={({ target: { value } }) => update({ hoursAlone: Number(value) })}
       />

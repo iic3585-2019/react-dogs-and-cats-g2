@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import './style.css';
 
 // Components
-import { Button, Modal } from '@material-ui/core';
+import { Modal } from '@material-ui/core';
 import Image from '../Image';
 
 const Match = ({ isAMatch, uri, onClose, ...props }) => (
@@ -14,7 +14,7 @@ const Match = ({ isAMatch, uri, onClose, ...props }) => (
       <div className="match__body elevation-2">
         <Image uri={uri} />
 
-        <Button variant="contained" color="primary" onClick={onClose}>Aceptar</Button>
+        <h1>It's a Match!</h1>
       </div>
     </Modal>
   </div>

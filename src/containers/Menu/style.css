@@ -6,5 +6,6 @@
   z-index: 1;
 }
 
-.menu__body {
+.MuiIconButton-root {
+  color: white !important;
 }
