@@ -64,7 +64,7 @@ export default class Home extends Component {
 
     this.setState({
       feed: feed.slice(1),
-      match: feedItem,
+      match: feedItem.like ? feedItem : null,
     });
   }
 
