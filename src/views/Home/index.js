@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 // Internal modules:
 // - API
+import { connect } from 'react-redux';
 import getPet from '../../API/pets';
 
 // Components
@@ -21,58 +22,70 @@ import Menu from '../../containers/Menu';
 import Summary from '../../components/Summary';
 import TinderSwipeable from '../../containers/TinderSwipeable';
 
-export default class Home extends Component {
+class Home extends Component {
   constructor(props) {
     super(props);
 
+    const { profile } = props;
+
     this.state = {
+      profile,
       feed: [],
       match: null,
     };
   }
 
   async componentDidMount() {
+    const { profile } = this.state;
     const feed = await this.buildFeed(10);
 
-    this.setState({ feed });
+    this.setState({ feed, profile });
   }
 
-  buildFeed = async (size) => {
+  buildFeed = async size => {
+    const {profile} = this.state;
+
     const chance = new Chance();
 
     const buildFeedItem = async () => {
       const pet = await getPet();
-
+      const { mealsPerDay, weeklyWalks, hoursAlone } = profile;
+      let like;
+      if (pet.type === 'dog') {
+        like = mealsPerDay * 0.4 + weeklyWalks * 0.8 - hoursAlone * 0.4 > 5;
+      } else if (pet.type === 'cat') {
+        like = mealsPerDay * 0.5 - weeklyWalks * 0.4 + hoursAlone * 0.6 > 5;
+      }
       return {
         uri: pet.image,
+        type: pet.type,
         summary: {
           name: chance.first(),
           age: chance.age({ type: 'child' }),
-          description: chance.paragraph({ sentences: 5 })
+          breed: pet.breed,
+          description: chance.paragraph({ sentences: 5 }),
         },
-        like: Boolean(_.random(1)),
+        like,
       };
     };
 
-    return Promise.all(
-      [...Array(size).keys()].map(buildFeedItem)
-    );
-  }
+    return Promise.all([...Array(size).keys()].map(buildFeedItem));
+  };
 
-  onRightSwipe = (feedItem) => {
+  onRightSwipe = feedItem => {
     const { feed } = this.state;
 
     this.setState({
       feed: feed.slice(1),
       match: feedItem.like ? feedItem : null,
     });
-  }
+  };
 
   onLeftSwipe = () => {
-    const { feed } = this.state;
+    const { feed, profile } = this.state;
 
-    this.setState({ feed: feed.slice(1) });
-  }
+    this.setState({ feed: feed.slice(1), profile });
+  };
 
   render() {
     const { feed, match } = this.state;
@@ -114,3 +127,10 @@ export default class Home extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const { profile } = state;
+  return { profile };
+};
+
+export default connect(mapStateToProps)(Home);

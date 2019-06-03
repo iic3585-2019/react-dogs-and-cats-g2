@@ -21,20 +21,19 @@ const getAllDogsBreedImages = async breed => {
 };
 
 const getRandomDogsBreedImages = async (breed, quantity) => {
-  const images = await axios.get(
-    `${BREED_IMAGES_URI + breed}/images/random/${quantity}`
-  );
+  const images = await axios.get(`${BREED_IMAGES_URI + breed}/images/random/${quantity}`);
   return images;
 };
 
 const getDog = async () => {
+  const type = 'dog';
   const breedsApi = await getAllDogsBreeds();
   const breeds = Object.keys(breedsApi.data.message);
   const randomNumber = random(breeds.length - 1);
   const breed = breeds[randomNumber];
   const dog = await axios.get(`${BREED_IMAGES_URI + breed}/images/random`);
   const image = dog.data.message;
-  return { breed, image };
+  return { type, breed, image };
 };
 
 const getSubBreeds = async breed => {
@@ -43,15 +42,13 @@ const getSubBreeds = async breed => {
 };
 
 const getAllSubBreedImages = async (breed, subBreed) => {
-  const images = await axios.get(
-    `${BREED_IMAGES_URI + breed}/${subBreed}/images`
-  );
+  const images = await axios.get(`${BREED_IMAGES_URI + breed}/${subBreed}/images`);
   return images;
 };
 
 const getRandomSubBreedImages = async (breed, subBreed, quantity) => {
   const images = await axios.get(
-    `${BREED_IMAGES_URI + breed}/${subBreed}/images/random/${quantity}`
+    `${BREED_IMAGES_URI + breed}/${subBreed}/images/random/${quantity}`,
   );
   return images;
 };
