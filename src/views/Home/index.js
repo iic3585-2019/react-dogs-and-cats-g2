@@ -44,6 +44,7 @@ export default class Home extends Component {
         summary: {
           name: chance.first(),
           age: chance.age({ type: 'child' }),
+          breed: pet.breed,
           description: chance.paragraph({ sentences: 5 }),
         },
         like: Boolean(_.random(1)),
