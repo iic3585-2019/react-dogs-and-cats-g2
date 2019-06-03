@@ -46,6 +46,7 @@ export default class Home extends Component {
           age: chance.age({ type: 'child' }),
           description: chance.paragraph({ sentences: 5 })
         },
+        like: Boolean(_.random(1)),
       };
     };
 
@@ -54,8 +55,12 @@ export default class Home extends Component {
     );
   }
 
-  onRightSwipe = () => {
+  onRightSwipe = (feedItem) => {
     const { feed } = this.state;
+
+    if (feedItem.like) {
+      console.log('match!');
+    }
 
     this.setState({ feed: feed.slice(1) });
   }
@@ -76,19 +81,19 @@ export default class Home extends Component {
         <Menu />
 
         {
-          feedBatch.map(({ uri, summary }) => (
+          feedBatch.map((feedItem) => (
             <div
-              key={summary.name}
+              key={feedItem.summary.name + feedItem.uri}
               className="tinder-swipeable-wrapper"
             >
               <TinderSwipeable
-                node={<Image uri={uri} />}
+                node={<Image uri={feedItem.uri} />}
                 threshold={.5}
-                onRightSwipe={this.onRightSwipe}
+                onRightSwipe={() => this.onRightSwipe(feedItem)}
                 onLeftSwipe={this.onLeftSwipe}
               />
 
-              <Summary summary={summary} />
+              <Summary summary={feedItem.summary} />
             </div>
           ))
         }
