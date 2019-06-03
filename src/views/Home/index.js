@@ -23,6 +23,8 @@ import Menu from '../../containers/Menu';
 import Summary from '../../components/Summary';
 import TinderSwipeable from '../../containers/TinderSwipeable';
 
+const chance = new Chance();
+
 const toProbability = (x) => {
   const m = .025;
   const y = m * x + 0.5;
@@ -49,52 +51,67 @@ class Home extends Component {
     this.setState({ feed });
   }
 
-  buildFeed = async size => {
-    const chance = new Chance();
+  buildFeedItem = async () => {
+    const pet = await getPet();
 
-    const buildFeedItem = async () => {
-      const pet = await getPet();
-
-      return {
-        uri: pet.image,
-        type: pet.type,
-        summary: {
-          name: chance.first(),
-          age: chance.age({ type: 'child' }),
-          breed: pet.breed,
-          description: chance.paragraph({ sentences: 5 }),
-        },
-      };
+    return {
+      uri: pet.image,
+      type: pet.type,
+      summary: {
+        name: chance.first(),
+        age: chance.age({ type: 'child' }),
+        breed: pet.breed,
+        description: chance.paragraph({ sentences: 5 }),
+      },
     };
-
-    return Promise.all([...Array(size).keys()].map(buildFeedItem));
   };
 
-  onRightSwipe = feedItem => {
+  buildFeed = async size => {
+    return Promise.all([...Array(size).keys()].map(this.buildFeedItem));
+  };
+
+  moreFeed = async () => {
+    const { feed } = this.state;
+
+    const newFeedItem = await this.buildFeedItem();
+
+    this.setState({ feed: [...feed, newFeedItem] });
+  }
+
+  onRightSwipe = async feedItem => {
     const { profile: { mealsPerDay, weeklyWalks, hoursAlone } } = this.props;
     const { feed } = this.state;
 
-    let x = 0;
+    let x;
+    switch (feedItem.type) {
+      case 'dog':
+        x = (mealsPerDay - 3) + (weeklyWalks - 5) - (hoursAlone - 8);
+        break;
+      case 'cat':
+        x = (mealsPerDay - 6) - (weeklyWalks - 2) + (hoursAlone - 10);
+        break;
+      default:
+        x = 0;
+    }
+    const heLikesYou = Math.random() <= toProbability(x);
 
-    if (feedItem.type === 'dog')
-      x = (mealsPerDay - 3) + (weeklyWalks - 5) - (hoursAlone - 8);
-    else if (feedItem.type === 'cat')
-      x = (mealsPerDay - 6) - (weeklyWalks - 2) + (hoursAlone - 10);
-
-    const like = Math.random() <= toProbability(x);
-
-    console.log(`x: ${x}`, `p: ${toProbability(x)}`, like);
+    // eslint-disable-next-line no-console
+    console.log(`x: ${x}`, `p: ${toProbability(x)}`, heLikesYou);
 
     this.setState({
       feed: feed.slice(1),
-      match: like ? feedItem : null,
+      match: heLikesYou ? feedItem : null,
     });
+
+    this.moreFeed();
   };
 
-  onLeftSwipe = () => {
+  onLeftSwipe = async () => {
     const { feed } = this.state;
 
     this.setState({ feed: feed.slice(1) });
+
+    this.moreFeed();
   };
 
   render() {
