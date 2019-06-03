@@ -6,6 +6,7 @@ import './style.css';
 // External modules:
 // - Change (https://github.com/chancejs/chancejs)
 import Chance from 'chance';
+import _ from 'lodash';
 
 // Components
 import TinderSwipeable from '../../containers/TinderSwipeable';
@@ -106,7 +107,6 @@ export default class Home extends Component {
       getItem(),
       getItem(),
       getItem(),
-      getItem(),
     ]);
 
     this.setState({ items });
@@ -128,7 +128,7 @@ export default class Home extends Component {
     const { items } = this.state;
 
     const batch = items.slice(0, 2);
-    const tinderSwipeables = batch.map(({ uri, summary }) => (
+    const tinderSwipeables = _.reverse(batch).map(({ uri, summary }) => (
       <div
         key={summary.name}
         className="tinder-swipeable-wrapper"
