@@ -16,14 +16,12 @@ const getRandomDogsImages = async quantity => {
 };
 
 const getAllDogsBreedImages = async breed => {
-  const images = await axios.get(BREED_IMAGES_URI + breed + '/images');
+  const images = await axios.get(`${BREED_IMAGES_URI + breed}/images`);
   return images;
 };
 
 const getRandomDogsBreedImages = async (breed, quantity) => {
-  const images = await axios.get(
-    BREED_IMAGES_URI + breed + '/images/random/' + quantity
-  );
+  const images = await axios.get(`${BREED_IMAGES_URI + breed}/images/random/${quantity}`);
   return images;
 };
 
@@ -32,26 +30,24 @@ const getDog = async () => {
   const breeds = Object.keys(breedsApi.data.message);
   const randomNumber = random(breeds.length - 1);
   const breed = breeds[randomNumber];
-  const dog = await axios.get(BREED_IMAGES_URI + breed + '/images/random');
+  const dog = await axios.get(`${BREED_IMAGES_URI + breed}/images/random`);
   const image = dog.data.message;
   return { breed, image };
 };
 
 const getSubBreeds = async breed => {
-  const subBreeds = await axios.get(BREED_IMAGES_URI + breed + '/list');
+  const subBreeds = await axios.get(`${BREED_IMAGES_URI + breed}/list`);
   return subBreeds;
 };
 
 const getAllSubBreedImages = async (breed, subBreed) => {
-  const images = await axios.get(
-    BREED_IMAGES_URI + breed + '/' + subBreed + '/images'
-  );
+  const images = await axios.get(`${BREED_IMAGES_URI + breed}/${subBreed}/images`);
   return images;
 };
 
 const getRandomSubBreedImages = async (breed, subBreed, quantity) => {
   const images = await axios.get(
-    BREED_IMAGES_URI + breed + '/' + subBreed + '/images/random/' + quantity
+    `${BREED_IMAGES_URI + breed}/${subBreed}/images/random/${quantity}`,
   );
   return images;
 };

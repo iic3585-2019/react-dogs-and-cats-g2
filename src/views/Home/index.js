@@ -1,139 +1,96 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import $ from 'classnames';
+
+// Stylesheets
 import './style.css';
 
 // External modules:
 // - Change (https://github.com/chancejs/chancejs)
 import Chance from 'chance';
 
+// - Lodash (https://github.com/lodash/lodash)
+import _ from 'lodash';
+
+// Internal modules:
+// - API
+import getPet from '../../API/pets';
+
+// Components
+import Image from '../../components/Image';
+import Menu from '../../containers/Menu';
+import Summary from '../../components/Summary';
 import TinderSwipeable from '../../containers/TinderSwipeable';
-import Animals from '../../containers/Animals/Animals.js';
-import { getAnimal } from '../../wrapper/animals';
-
-//const chance = new Chance();
-
-const getItem = async () => {
-  const randomAnimal = await getAnimal();
-  return {
-    uri: randomAnimal.image,
-    summary: {
-      breed: randomAnimal.breed,
-    },
-  };
-};
-
-// =============================================================================
-
-const Image = ({ uri, className, ...props }) => (
-  <div className={$('image', className)} style={{ backgroundImage: `url(${uri})` }} {...props} />
-);
-
-Image.defaultProps = {
-  className: '',
-};
-
-Image.propTypes = {
-  uri: PropTypes.string.isRequired,
-  className: PropTypes.string,
-};
-
-// =============================================================================
-
-const Summary = ({ className, ...props }) => {
-  const { summary } = props;
-  const { breed } = summary;
-
-  return (
-    <div className={$('summary', className)} {...props}>
-      <div className="d-flex-r d-flex-a-c v-padding-0 h-padding-1">
-        <div className="summary__name">{breed}</div>
-      </div>
-
-      <div className="h-separator" />
-    </div>
-  );
-};
-
-Summary.defaultProps = {
-  className: '',
-};
-
-Summary.propTypes = {
-  summary: PropTypes.shape({
-    breed: PropTypes.string.isRequired,
-  }).isRequired,
-  className: PropTypes.string,
-};
-
-// =============================================================================
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
-    const preItems = [getItem(), getItem(), getItem(), getItem(), getItem(), getItem(), getItem()];
-    this.state = {
-      items: null,
-      preItems,
+
+    this.state = { feed: [] };
+  }
+
+  async componentDidMount() {
+    const feed = await this.buildFeed(10);
+
+    this.setState({ feed });
+  }
+
+  buildFeed = async size => {
+    const chance = new Chance();
+
+    const buildFeedItem = async () => {
+      const pet = await getPet();
+
+      return {
+        uri: pet.image,
+        summary: {
+          name: chance.first(),
+          age: chance.age({ type: 'child' }),
+          description: chance.paragraph({ sentences: 5 }),
+        },
+        like: Boolean(_.random(1)),
+      };
     };
-  }
 
-  async newState() {
-    const { preItems } = this.state;
-    const newItems = await Promise.all(preItems);
-    this.setState({
-      items: newItems,
-    });
-  }
+    return Promise.all([...Array(size).keys()].map(buildFeedItem));
+  };
 
-  onRightSwipe = () => {
-    console.log('entre a la derecha');
-    const { items } = this.state;
-    console.log(items);
+  onRightSwipe = feedItem => {
+    const { feed } = this.state;
 
-    const newItems = items.slice(1);
-    console.log('estos son los nuevos items');
-    console.log(newItems);
-    this.setState({ items: newItems });
+    if (feedItem.like) {
+      console.log('match!');
+    }
 
-    console.log('right!');
+    this.setState({ feed: feed.slice(1) });
   };
 
   onLeftSwipe = () => {
-    const { items } = this.state;
+    const { feed } = this.state;
 
-    const newItems = items.slice(1);
-    console.log(newItems);
-    this.setState({ items: newItems });
-
-    console.log('left!');
+    this.setState({ feed: feed.slice(1) });
   };
 
   render() {
-    const { items } = this.state;
-    if (items !== null) {
-      console.log('los items');
-      console.log(items);
-      const batch = items.slice(0, 2);
-      console.log('el batch');
-      console.log(batch);
-      const tinderSwipeables = batch.map(({ uri, summary }) => (
-        <div key={summary.breed} className="tinder-swipeable-wrapper">
-          <TinderSwipeable
-            node={<Image uri={uri} />}
-            threshold={0.5}
-            onRightSwipe={this.onRightSwipe}
-            onLeftSwipe={this.onLeftSwipe}
-          />
+    const { feed } = this.state;
 
-          <Summary summary={summary} />
-        </div>
-      ));
+    const feedBatch = _.reverse(feed.slice(0, 2));
 
-      return <div className="home">{tinderSwipeables}</div>;
-    } else {
-      this.newState();
-    }
-    return false;
+    return (
+      <div className="home">
+        <Menu />
+
+        {feedBatch.map(feedItem => (
+          <div key={feedItem.summary.name + feedItem.uri} className="tinder-swipeable-wrapper">
+            <TinderSwipeable
+              node={<Image uri={feedItem.uri} />}
+              threshold={0.5}
+              onRightSwipe={() => this.onRightSwipe(feedItem)}
+              onLeftSwipe={this.onLeftSwipe}
+            />
+
+            <Summary summary={feedItem.summary} />
+          </div>
+        ))}
+      </div>
+    );
   }
 }
