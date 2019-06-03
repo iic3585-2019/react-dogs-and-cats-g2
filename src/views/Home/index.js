@@ -1,157 +1,98 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import $ from 'classnames';
+
+// Stylesheets
 import './style.css';
 
 // External modules:
 // - Change (https://github.com/chancejs/chancejs)
 import Chance from 'chance';
+
+// - Lodash (https://github.com/lodash/lodash)
 import _ from 'lodash';
 
-// Components
-import TinderSwipeable from '../../containers/TinderSwipeable';
-import Menu from '../../containers/Menu';
-
+// Internal modules:
+// - API
 import getPet from '../../API/pets';
 
-const chance = new Chance();
-const getItem = async () => {
-  const pet = await getPet();
-
-  return {
-    uri: pet.image,
-    summary: {
-      name: chance.first(),
-      age: chance.age({ type: 'child' }),
-      description: chance.paragraph({ sentences: 5 })
-    },
-  };
-};
-
-// =============================================================================
-
-const Image = ({ uri, className, ...props }) => (
-  <div
-    className={$('image', className)}
-    style={{ backgroundImage: `url(${uri})` }}
-    {...props}
-  />
-);
-
-Image.defaultProps = {
-  className: '',
-};
-
-Image.propTypes = {
-  uri: PropTypes.string.isRequired,
-  className: PropTypes.string,
-};
-
-// =============================================================================
-
-const Summary = ({ className, ...props }) => {
-  const { summary } = props;
-  const { name, age, description } = summary;
-
-  return (
-    <div
-      className={$('summary', className)}
-      {...props}
-    >
-      <div className="d-flex-r d-flex-a-c v-padding-0 h-padding-1">
-        <div className="summary__name">
-          {name}
-        </div>
-
-        <div className="summary__age margin-l-0">
-          {age}
-        </div>
-      </div>
-
-      <div className="h-separator" />
-
-      <div className="summary__description v-padding-0 h-padding-1">
-        {description}
-      </div>
-    </div>
-  );
-};
-
-Summary.defaultProps = {
-  className: '',
-};
-
-Summary.propTypes = {
-  summary: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    age: PropTypes.number.isRequired,
-    description: PropTypes.string.isRequired,
-  }).isRequired,
-  className: PropTypes.string,
-};
-
-// =============================================================================
+// Components
+import Image from '../../components/Image';
+import Menu from '../../containers/Menu';
+import Summary from '../../components/Summary';
+import TinderSwipeable from '../../containers/TinderSwipeable';
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { items: [] };
+    this.state = { feed: [] };
   }
 
   async componentDidMount() {
-    const items = await Promise.all([
-      getItem(),
-      getItem(),
-      getItem(),
-      getItem(),
-      getItem(),
-      getItem(),
-    ]);
+    const feed = await this.buildFeed(10);
 
-    this.setState({ items });
+    this.setState({ feed });
+  }
+
+  buildFeed = async (size) => {
+    const chance = new Chance();
+
+    const buildFeedItem = async () => {
+      const pet = await getPet();
+
+      return {
+        uri: pet.image,
+        summary: {
+          name: chance.first(),
+          age: chance.age({ type: 'child' }),
+          description: chance.paragraph({ sentences: 5 })
+        },
+      };
+    };
+
+    return Promise.all(
+      [...Array(size).keys()].map(buildFeedItem)
+    );
   }
 
   onRightSwipe = () => {
-    const { items } = this.state;
+    const { feed } = this.state;
 
-    this.setState({ items: items.slice(1) });
+    this.setState({ feed: feed.slice(1) });
   }
 
   onLeftSwipe = () => {
-    const { items } = this.state;
+    const { feed } = this.state;
 
-    this.setState({ items: items.slice(1) });
+    this.setState({ feed: feed.slice(1) });
   }
 
   render() {
-    const { items } = this.state;
+    const { feed } = this.state;
 
-    const batch = items.slice(0, 2);
-    const tinderSwipeables = _.reverse(batch).map(({ uri, summary }) => (
-      <div
-        key={summary.name}
-        className="tinder-swipeable-wrapper"
-      >
-        <TinderSwipeable
-          node={<Image uri={uri} />}
-          threshold={.5}
-          onRightSwipe={this.onRightSwipe}
-          onLeftSwipe={this.onLeftSwipe}
-        />
-
-        <Summary summary={summary} />
-      </div>
-    ));
+    const feedBatch = _.reverse(feed.slice(0, 2));
 
     return (
-      <React.Fragment>
+      <div className="home">
         <Menu />
 
-        <div className="home">
-          {tinderSwipeables}
-        </div>
-      </React.Fragment>
+        {
+          feedBatch.map(({ uri, summary }) => (
+            <div
+              key={summary.name}
+              className="tinder-swipeable-wrapper"
+            >
+              <TinderSwipeable
+                node={<Image uri={uri} />}
+                threshold={.5}
+                onRightSwipe={this.onRightSwipe}
+                onLeftSwipe={this.onLeftSwipe}
+              />
+
+              <Summary summary={summary} />
+            </div>
+          ))
+        }
+      </div>
     );
   }
 }
