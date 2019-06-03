@@ -34,6 +34,7 @@ const getRandomCatsBreedImages = async (breed, quantity) => {
 };
 
 const getCat = async () => {
+  const type = 'cat';
   const breeds = await getAllCatsBreeds();
   const randomNumber = random(breeds.data.length - 1);
   const breedInfo = breeds.data[randomNumber];
@@ -44,7 +45,7 @@ const getCat = async () => {
   });
   const image = cat.data[0].url;
   const breed = breedInfo.name;
-  return { breed, image };
+  return { type, breed, image };
 };
 
 export { getAllCatsBreeds, getRandomCatsImages, getRandomCatsBreedImages, getCat };

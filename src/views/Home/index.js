@@ -19,18 +19,20 @@ import Image from '../../components/Image';
 import Menu from '../../containers/Menu';
 import Summary from '../../components/Summary';
 import TinderSwipeable from '../../containers/TinderSwipeable';
+import { connect } from 'react-redux';
 
-export default class Home extends Component {
+class Home extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { feed: [] };
+    this.state = { feed: [], profile: this.props.profile };
   }
 
   async componentDidMount() {
+    const { profile } = this.state;
     const feed = await this.buildFeed(10);
 
-    this.setState({ feed });
+    this.setState({ feed, profile });
   }
 
   buildFeed = async size => {
@@ -38,16 +40,23 @@ export default class Home extends Component {
 
     const buildFeedItem = async () => {
       const pet = await getPet();
-
+      const { mealsPerDay, weeklyWalks, hoursAlone } = this.state.profile;
+      let like;
+      if (pet.type === 'dog') {
+        like = mealsPerDay * 0.4 + weeklyWalks * 0.8 - hoursAlone * 0.4 > 5;
+      } else if (pet.type === 'cat') {
+        like = mealsPerDay * 0.5 - weeklyWalks * 0.4 + hoursAlone * 0.6 > 5;
+      }
       return {
         uri: pet.image,
+        type: pet.type,
         summary: {
           name: chance.first(),
           age: chance.age({ type: 'child' }),
           breed: pet.breed,
           description: chance.paragraph({ sentences: 5 }),
         },
-        like: Boolean(_.random(1)),
+        like,
       };
     };
 
@@ -55,19 +64,19 @@ export default class Home extends Component {
   };
 
   onRightSwipe = feedItem => {
-    const { feed } = this.state;
-
+    const { feed, profile } = this.state;
+    console.log(feedItem.like);
     if (feedItem.like) {
       console.log('match!');
     }
 
-    this.setState({ feed: feed.slice(1) });
+    this.setState({ feed: feed.slice(1), profile });
   };
 
   onLeftSwipe = () => {
-    const { feed } = this.state;
+    const { feed, profile } = this.state;
 
-    this.setState({ feed: feed.slice(1) });
+    this.setState({ feed: feed.slice(1), profile });
   };
 
   render() {
@@ -95,3 +104,10 @@ export default class Home extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const { profile } = state;
+  return { profile };
+};
+
+export default connect(mapStateToProps)(Home);
