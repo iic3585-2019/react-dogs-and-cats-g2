@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 // Stylesheets
 import './style.css';
@@ -22,40 +23,38 @@ import Menu from '../../containers/Menu';
 import Summary from '../../components/Summary';
 import TinderSwipeable from '../../containers/TinderSwipeable';
 
+const toProbability = (x) => {
+  const m = .025;
+  const y = m * x + 0.5;
+
+  if (y < 0) return 0;
+  if (y > 1) return 1;
+
+  return y;
+};
+
 class Home extends Component {
   constructor(props) {
     super(props);
 
-    const { profile } = props;
-
     this.state = {
-      profile,
       feed: [],
       match: null,
     };
   }
 
   async componentDidMount() {
-    const { profile } = this.state;
     const feed = await this.buildFeed(10);
 
-    this.setState({ feed, profile });
+    this.setState({ feed });
   }
 
   buildFeed = async size => {
-    const {profile} = this.state;
-
     const chance = new Chance();
 
     const buildFeedItem = async () => {
       const pet = await getPet();
-      const { mealsPerDay, weeklyWalks, hoursAlone } = profile;
-      let like;
-      if (pet.type === 'dog') {
-        like = mealsPerDay * 0.4 + weeklyWalks * 0.8 - hoursAlone * 0.4 > 5;
-      } else if (pet.type === 'cat') {
-        like = mealsPerDay * 0.5 - weeklyWalks * 0.4 + hoursAlone * 0.6 > 5;
-      }
+
       return {
         uri: pet.image,
         type: pet.type,
@@ -65,7 +64,6 @@ class Home extends Component {
           breed: pet.breed,
           description: chance.paragraph({ sentences: 5 }),
         },
-        like,
       };
     };
 
@@ -73,18 +71,28 @@ class Home extends Component {
   };
 
   onRightSwipe = feedItem => {
+    const { profile: { mealsPerDay, weeklyWalks, hoursAlone } } = this.props;
     const { feed } = this.state;
+
+    let x = 0;
+
+    if (feedItem.type === 'dog')
+      x = (mealsPerDay - 3) + (weeklyWalks - 5) - (hoursAlone - 8);
+    else if (feedItem.type === 'cat')
+      x = (mealsPerDay - 6) - (weeklyWalks - 2) + (hoursAlone - 10);
+
+    const like = Math.random() <= toProbability(x);
 
     this.setState({
       feed: feed.slice(1),
-      match: feedItem.like ? feedItem : null,
+      match: like ? feedItem : null,
     });
   };
 
   onLeftSwipe = () => {
-    const { feed, profile } = this.state;
+    const { feed } = this.state;
 
-    this.setState({ feed: feed.slice(1), profile });
+    this.setState({ feed: feed.slice(1) });
   };
 
   render() {
@@ -128,9 +136,16 @@ class Home extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  const { profile } = state;
-  return { profile };
+const mapStateToProps = state => ({
+  profile: state.profile,
+});
+
+Home.propTypes = {
+  profile: PropTypes.shape({
+    mealsPerDay: PropTypes.number.isRequired,
+    weeklyWalks: PropTypes.number.isRequired,
+    hoursAlone: PropTypes.number.isRequired,
+  }).isRequired
 };
 
 export default connect(mapStateToProps)(Home);
