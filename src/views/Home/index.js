@@ -11,10 +11,14 @@ import Chance from 'chance';
 import TinderSwipeable from '../../containers/TinderSwipeable';
 import Menu from '../../containers/Menu';
 
+import getPet from '../../API/pets';
+
 const chance = new Chance();
-const getItem = () => {
+const getItem = async () => {
+  const pet = await getPet();
+
   return {
-    uri: "https://static.twentytwowords.com/wp-content/uploads/03_-_ty6nplc.jpg",
+    uri: pet.image,
     summary: {
       name: chance.first(),
       age: chance.age({ type: 'child' }),
@@ -91,19 +95,21 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    const items = [
-      getItem(),
-      getItem(),
-      getItem(),
-      getItem(),
-      getItem(),
-      getItem(),
-      getItem(),
-    ];
+    this.state = { items: [] };
+  }
 
-    this.state = {
-      items
-    };
+  async componentDidMount() {
+    const items = await Promise.all([
+      getItem(),
+      getItem(),
+      getItem(),
+      getItem(),
+      getItem(),
+      getItem(),
+      getItem(),
+    ]);
+
+    this.setState({ items });
   }
 
   onRightSwipe = () => {
