@@ -1,18 +1,12 @@
 import React from 'react';
-
-// Stylesheets
-import './App.css';
+import { Provider } from 'react-redux';
+import store from './store';
 
 // Components
-import { Provider } from 'react-redux';
 import Routes from './Routes';
-
-import store from './store';
 
 export default () => (
   <Provider store={store}>
-    <div>
-      <Routes />
-    </div>
+    <Routes />
   </Provider>
 );
